@@ -1,6 +1,8 @@
 import matplotlib
+from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 import numpy as np
+
 
 raw = [l.strip() for l in open("output.txt", "r").readlines()]
 total_wins = {}
@@ -47,11 +49,31 @@ for gm in range(len(raw)//11):
 
 
 
-print(total_wins)
 organized_wins = [[], [], [], [], []]
+
 for e in total_wins:
     if(total_games[e] > 5):
         organized_wins[position_int[e[0]]].append((e[1], total_wins[e]/total_games[e]))
 
-plt.plot(*zip(*sorted(organized_wins[4])))
-plt.show()
+for i in range(5):
+    analysis_position = i # position int
+
+    x = [a[0] for a in organized_wins[analysis_position]]
+    y = [a[1] for a in organized_wins[analysis_position]]
+
+    x = np.array(x).reshape((-1, 1))
+    y = np.array(y).reshape((-1, 1))
+
+    reg = LinearRegression().fit(x, y)
+    print("Position: " + str(i) + "\t\tcoeff: " + str(reg.coef_) + "\t\t r^2: " + str(reg.score(x, y)))
+
+    plt.plot(*zip(*sorted(organized_wins[analysis_position])))
+    plt.show()
+
+
+
+
+
+
+
+
